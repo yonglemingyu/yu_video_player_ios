@@ -5,8 +5,8 @@ import Foundation
 /// 完全按字节配置：单条上限由外部传入，写入 meta 后固定。
 struct YUPrefixMeta: Codable {
 
-    /// 单条默认上限：16MB
-    static let defaultMaxBytesPerVideo: Int64 = 16 * 1024 * 1024
+    /// 单条默认上限：6MB
+    static let defaultMaxBytesPerVideo: Int64 = 6 * 1024 * 1024
 
     /// 整片总字节数（由 Range 探测得到）
     var totalLength: Int64

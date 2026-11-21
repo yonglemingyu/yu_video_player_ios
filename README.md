@@ -22,9 +22,9 @@ dependencies: [
 ```swift
 import YUVideoPlayerIOS
 
-// 1. 容量（可选，默认全局 1GB、单条 16MB）
+// 1. 容量（可选，默认全局 1GB、单条 6MB）
 YUVideoCache.maxTotalBytes = 1024 * 1024 * 1024
-YUVideoCache.maxBytesPerVideo = 16 * 1024 * 1024
+YUVideoCache.maxBytesPerVideo = 6 * 1024 * 1024
 
 // 2. 曝光时预取，失败静默
 YUVideoCache.prefetch(vid: "3412", realURL: url)

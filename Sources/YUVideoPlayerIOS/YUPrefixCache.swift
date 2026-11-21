@@ -9,7 +9,7 @@ public enum YUPrefixCache {
     /// 全局可占用的磁盘上限，默认 1GB
     static var maxTotalBytes: Int64 = 1024 * 1024 * 1024
 
-    /// 单条视频可占用的上限，默认 16MB
+    /// 单条视频可占用的上限，默认 6MB
     static var maxBytesPerVideo: Int64 = YUPrefixMeta.defaultMaxBytesPerVideo
 
     // MARK: - 路径

@@ -11,13 +11,20 @@ public enum YUVideoCache {
 
     // MARK: - 配置
 
+    /// 预取总开关，默认关闭。
+    ///
+    /// 关闭时不探测总长、不下载前缀，包括 `playerItem` 里那次隐式预取。
+    /// 因为 meta 建不出来，缓存链路也就一直不会生效。磁盘上已有的前缀照常
+    /// 命中：播放仍走缓存链路，只是不再往前补。
+    public static var prefetchEnabled = false
+
     /// 全局可用缓存总量，默认 1GB
     public static var maxTotalBytes: Int64 {
         get { YUPrefixCache.maxTotalBytes }
         set { YUPrefixCache.maxTotalBytes = max(0, newValue) }
     }
 
-    /// 单条视频可缓存的上限，默认 16MB
+    /// 单条视频可缓存的上限，默认 6MB
     public static var maxBytesPerVideo: Int64 {
         get { YUPrefixCache.maxBytesPerVideo }
         set { YUPrefixCache.maxBytesPerVideo = max(0, newValue) }
@@ -25,8 +32,11 @@ public enum YUVideoCache {
 
     // MARK: - 预取
 
-    /// 详情页曝光时调用，失败静默，不阻塞任何 UI
+    /// 详情页曝光时调用，失败静默，不阻塞任何 UI。
+    ///
+    /// 预取开关关闭时直接返回，连后台任务都不起。
     public static func prefetch(vid: String, realURL: URL) {
+        guard prefetchEnabled else { return }
         let renewer = renew
         Task.detached(priority: .utility) {
             await YUPrefixCache.prefetch(vid: vid, realURL: realURL, renew: renewer)
@@ -54,7 +64,7 @@ public enum YUVideoCache {
            let item = YUPrefixCache.makeItem(vid: vid, realURL: realURL, store: store, renew: renew) {
             return item
         }
-        prefetch(vid: vid, realURL: realURL)
+        prefetch(vid: vid, realURL: realURL)   // 开关关闭时这里是 no-op
         // 纯网络 item 是系统类，没法挂 deinit 打点，这里用事件日志标一条，
         // 避免在日志里"凭空少一个播放项"
         YULog.log("[事件] 纯网络播放项 vid=\(vid)（无 meta，不计入播放项存活）")
